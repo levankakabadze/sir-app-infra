@@ -1,0 +1,40 @@
+# Terraform state files - never commit these
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+
+# Terraform working directory - contains provider binaries
+.terraform/
+
+# Terraform lock file - commit this one (we remove it from ignore)
+# .terraform.lock.hcl
+
+# Variable files that may contain secrets
+*.tfvars
+*.tfvars.json
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform plan files - binary, not human readable
+*.tfplan
+
+# OS files
+.DS_Store
+.DS_Store?
+Thumbs.db
+
+# Editor files
+.vscode/settings.json
+*.swp
+*.swo
+
+# Specific file
+notes.txt
