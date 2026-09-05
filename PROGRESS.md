@@ -1,7 +1,7 @@
 # SIR-App Infrastructure — Progress Log
 
 ## Phase 1 — Foundation
-**Status:** In Progress
+**Status:** ✅ Complete
 **Date Started:** 2026-08-30
 
 ### Completed
@@ -31,3 +31,38 @@
 
 ### Cost This Session
 $0.00 — S3 bucket, IAM policy update, no compute resources created
+
+## Phase 2 — Networking Module
+**Status:** ✅ Complete
+
+### Completed
+- [x] modules/networking/variables.tf
+- [x] modules/networking/main.tf — VPC, subnets, IGW, NAT, route tables
+- [x] modules/networking/outputs.tf
+- [x] environments/dev/main.tf — root module calling networking
+- [x] environments/dev/variables.tf
+- [x] environments/dev/terraform.tfvars — CIDR values from ADR-001
+- [x] terraform init — networking module downloaded
+- [x] terraform plan — 19 resources previewed, all correct
+- [x] terraform apply — 19 resources created successfully
+- [x] Verified in AWS — VPC, subnets, state file in S3 confirmed
+- [x] NAT Gateway destroyed after session — cost stopped
+
+## Key Learnings
+- `target` destroy cascades through dependencies - destroying NAT Gateway also destroys private route table and its associations (5 resources total)
+- State file confirmed at s3://sir-app-terraform-state/dev/terraform.tfstate
+
+## Cost This Session
+- ~$0.01 — NAT Gateway ran approximately 10 minutes at $0.052/hr
+
+---
+
+## Phase 3 - Security Module
+**Status:** Not Started
+
+## To Do
+- [ ] Write ADR-002 — security group chaining design
+- [ ] Build modules/security/ — ALB SG, App SG, DB SG
+- [ ] Call security module from environments/dev/main.tf
+- [ ] Verify chaining — correct ingress/egress rules
+
