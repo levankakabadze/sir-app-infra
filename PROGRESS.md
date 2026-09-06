@@ -58,7 +58,7 @@ $0.00 — S3 bucket, IAM policy update, no compute resources created
 ---
 
 ## Phase 3 - Security Module
-**Status:** Not Started
+**Status:** ✅ Complete
 
 ## To Do
 - [ ] Write ADR-002 — security group chaining design
@@ -66,3 +66,39 @@ $0.00 — S3 bucket, IAM policy update, no compute resources created
 - [ ] Call security module from environments/dev/main.tf
 - [ ] Verify chaining — correct ingress/egress rules
 
+### Completed
+- [x] ADR-002 written - chained security group architecture
+- [x] modules/seucirty/variables.tf
+- [x] modules/security/main.tf - 3 SGs + 7 SG rules
+- [x] modules/security/output.tf - alb_sg_id, app_sg_id, db_sg_id
+- [x] Fixed circular dependency - separated SG creation from rules
+- [x] terraform apply -target=module.security - 10 resources created
+- [x] Verified in AWS - all 3 SGs confirmed, rules verified
+
+## Key learnings
+- Inline SG rules cause circular dependency when SGs reference
+  each other - fix by using separate aws_security_group_rule
+  resources
+- `terraform apply - target=module.name` targets entire module
+  at once - no need to list individual resources
+- `security_groups` argument used for SG-to-SG references -
+  `cidr_blocks` only for IP ranges
+- `source_security_group_id` used in aws_security_gorup_rule
+  for SG references
+
+### Cost This Session
+$0.00 - security groups are free
+
+---
+
+## Phase 4 - Compute Module
+**Status:** Not Started
+
+## To Do
+- [ ] Build modules/compute/ - EC2, ALB, target group, listener
+- [ ] Add outputs to environments/dev/variables.tf for compute vars
+- [ ] Call compute module from environments/dev/main.tf
+- [ ] Write user data script - nginx serving SIR app page
+- [ ] terraform apply - deploy compute with NAT Gateway
+- [ ] Hit ALB URL in browser - verify nginx page loads
+- [ ] Destroy EC2, ALB, NAT Gateway after session
