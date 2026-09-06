@@ -27,3 +27,14 @@ variable "project" {
   description = "The project name used for resource naming"
   type        = string
 }
+
+variable "instance_type" {
+  description = "The EC2 instance type"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "ami_id" {
+  description = "The AMI ID for the EC2 instance"
+  type        = string
+}
