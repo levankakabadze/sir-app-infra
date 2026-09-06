@@ -1,6 +1,8 @@
 # GEKUT-App — Three-Tier AWS Infrastructure Project Guide
 
-> **Goal:** Build a complete, real-world three-tier application infrastructure on AWS using Terraform. Frontend, backend, database — the classic pattern every company runs in production.
+> **Goal:** Build a complete, real-world three-tier application infrastructure on 
+  AWS using Terraform. Frontend, backend, database — the classic pattern every 
+  company runs in production.
 
 ---
 
