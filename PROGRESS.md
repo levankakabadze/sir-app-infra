@@ -68,7 +68,7 @@ $0.00 — S3 bucket, IAM policy update, no compute resources created
 
 ### Completed
 - [x] ADR-002 written - chained security group architecture
-- [x] modules/seucirty/variables.tf
+- [x] modules/security/variables.tf
 - [x] modules/security/main.tf - 3 SGs + 7 SG rules
 - [x] modules/security/output.tf - alb_sg_id, app_sg_id, db_sg_id
 - [x] Fixed circular dependency - separated SG creation from rules
@@ -94,15 +94,6 @@ $0.00 - security groups are free
 ## Phase 4 - Compute Module
 **Status:** ✅ Complete
 
-## To Do
-- [ ] Build modules/compute/ - EC2, ALB, target group, listener
-- [ ] Add outputs to environments/dev/variables.tf for compute vars
-- [ ] Call compute module from environments/dev/main.tf
-- [ ] Write user data script - nginx serving SIR app page
-- [ ] terraform apply - deploy compute with NAT Gateway
-- [ ] Hit ALB URL in browser - verify nginx page loads
-- [ ] Destroy EC2, ALB, NAT Gateway after session
-
 ### Completed
 - [x] ADR-003 written - compute architecture decision
 - [x] modules/compute/variables.tf
@@ -125,17 +116,56 @@ $0.00 - security groups are free
 - data "aws_region" "current" reads region from provider -
   no need to hardcode or declare as variable
 - ALB target group health check must pass before traffic routes
-- -target destroy o compute cascades: ALB listener, trage group
+- -target destroy o compute cascades: ALB listener, target group
   attachment, private RT associations all destroyed automatically
 
 ### Cost This Session
 - ~$0.15 - NAT Gateway + EC2 + ALB at Frankfurt rates
 
-## Phase 5 - Database Module
+## Phase 5 — Database Module
+**Status:** In Progress
+**Date Started:** 2026-09-07
+
+### Completed
+- [x] ADR-004 written — RDS database isolation design
+- [x] modules/database/variables.tf
+- [x] modules/database/main.tf — RDS PostgreSQL in isolated subnets
+- [x] modules/database/outputs.tf — endpoint, name, port
+- [x] environments/dev/main.tf — database module connected
+- [x] environments/dev/variables.tf — db variables added
+- [x] environments/dev/terraform.tfvars — db credentials added locally
+- [x] terraform plan — 11 resources verified, password shown as sensitive
+
+### Pending
+- [ ] terraform apply — waiting for storage and IAM modules
+
+---
+
+## Phase 6 — Storage Module
 **Status:** Not Started
 
-## To Do
-- [ ] Write ADR-004 - RDS isolation design
-- [ ] Build modules/database - RDS PostgresSQL
-- [ ] Verify EC2 can reach RDS, internet cannot
-- [ ] Destroy after session
+### To Do
+- [ ] ADR-005 written ✅
+- [ ] Build modules/storage/ — S3 bucket, versioning, encryption
+- [ ] Bucket policy — EC2 role only
+- [ ] Connect to root module
+
+---
+
+## Phase 7 — IAM Module
+**Status:** Not Started
+
+### To Do
+- [ ] ADR-006 written ✅
+- [ ] Build modules/iam/ — EC2 role, developer user, CI/CD user
+- [ ] Instance profile for EC2
+- [ ] Connect to root module
+
+---
+
+## Apply Session (After Phase 6 and 7 complete)
+- [ ] terraform apply — deploy all modules together
+- [ ] Verify RDS endpoint output
+- [ ] Verify S3 bucket exists
+- [ ] Verify IAM roles and users created
+- [ ] Destroy RDS, EC2, ALB, NAT Gateway after session
