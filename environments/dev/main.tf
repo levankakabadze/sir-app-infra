@@ -45,6 +45,7 @@ module "compute" {
 
   instance_type = var.instance_type
   ami_id        = var.ami_id
+  instance_profile_name = module.iam.ec2_instance_profile_name
 }
 
 # ==============================================================================
@@ -65,4 +66,27 @@ module "database" {
   db_password = var.db_password
 
   db_instance_class = var.db_instance_class
+}
+
+# ==============================================================================
+# IAM
+# ==============================================================================
+
+module "iam" {
+  source = "../../modules/iam"
+
+  project     = var.project
+  environment = var.environment
+}
+
+# ==============================================================================
+# STORAGE
+# ==============================================================================
+
+module "storage" {
+  source = "../../modules/storage"
+
+  project      = var.project
+  environment  = var.environment
+  ec2_role_arn = module.iam.ec2_role_arn
 }

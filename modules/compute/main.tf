@@ -62,6 +62,7 @@ resource "aws_instance" "main" {
     instance_type          = var.instance_type
     subnet_id              = var.private_subnet_ids["a"]
     vpc_security_group_ids = [var.app_sg_id]
+    iam_instance_profile   = var.instance_profile_name
 
     user_data = templatefile("${path.module}/user_data.sh", {
         environment = var.environment
