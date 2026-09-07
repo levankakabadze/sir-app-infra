@@ -33,7 +33,7 @@ traffic. No NAT Gateway route. No Internet Gateway route. The
 network path to the internet does not exist — it is not blocked 
 by software rules, it simply does not exist at the network level.
 
-The key distinction is defence in depth:
+The key distinction is defense in depth:
 - Private subnet: internet access blocked by security group (software)
 - Isolated subnet: internet access impossible at network level (topology)
 
@@ -86,7 +86,7 @@ subnet with no internet route in any direction.
   network topology level. A misconfigured security group cannot 
   expose the database to the internet because the network path 
   does not exist
-- **Defence in depth** — two independent layers of protection: 
+- **defense in depth** — two independent layers of protection: 
   network topology (isolated subnet) and identity-based access 
   control (security group referencing). Both must fail for the 
   database to be exposed

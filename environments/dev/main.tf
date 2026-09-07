@@ -46,3 +46,23 @@ module "compute" {
   instance_type = var.instance_type
   ami_id        = var.ami_id
 }
+
+# ==============================================================================
+# DATABASE
+# ==============================================================================
+
+module "database" {
+  source = "../../modules/database"
+
+  project     = var.project
+  environment = var.environment
+
+  isolated_subnet_ids = module.networking.isolated_subnet_ids
+  db_sg_id            = module.security.db_sg_id
+
+  db_name     = var.db_name
+  db_username = var.db_username
+  db_password = var.db_password
+
+  db_instance_class = var.db_instance_class
+}

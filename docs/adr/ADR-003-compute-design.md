@@ -22,14 +22,14 @@ approach increases the attack surface — any port on the EC2 instance
 becomes directly reachable from the internet, including SSH (port 22)
 and any misconfigured application ports. A compromised or 
 misconfigured EC2 instance in a public subnet is directly exposed
-whith no network-level barrier between it and the internet. 
+with no network-level barrier between it and the internet. 
 
 **Decision 2 — Whether to use an Application Load Balancer:**
 Traffic could be routed directly to an EC2 instance with a public
 IP, avoiding the cost of an ALB. However, this approach creates a 
 single point of failure with no health checking, no horizontal
 scaling capability, and no controlled entry point for traffic 
-management. As the SIR applicaiton grows to support more plant
+management. As the SIR application grows to support more plant
 sites and users, direct EC2 routing cannot scale without DNS or
 client configuration changes. 
 
@@ -39,10 +39,10 @@ public IP address, fronted by an Application Load Balancer in the
 public subnet. 
 
 **EC2 placement — private subnet:**
-- No public IP assigned — the instance is not reachble from the 
+- No public IP assigned — the instance is not reachable from the 
   internet directly under any circumstances
 - The only inbound path is port 80 from the ALB security group
-- SSH access requires tunelling through AWS System Manager
+- SSH access requires tunnelling through AWS System Manager
   Session Manage — no public SSH exposure
 - Outbound internet access for OS patching is provided via the 
   NAT Gateway in the public subnet
@@ -58,7 +58,7 @@ public subnet.
 
 **User data script:**
 - Installs nginx on first launch via Amazon Linux 2023 `dnf`
-- Serves a static SIR applicaiton landing page
+- Serves a static SIR application landing page
 - Environment and region values injected via Terraform
   `templatefile()` function at deploy time
 
@@ -82,21 +82,21 @@ public subnet.
 
 
 ### Trade-offs
-- **ALB as single entry point** - If the ALB becomse unavailable
+- **ALB as single entry point** - If the ALB becomes unavailable
   the application is unreachable regardless of EC2 health. In dev
-  this is acceptable. Prodution should implement Route 53 health
+  this is acceptable. Production should implement Route 53 health
   checks with DNS failover to a secondary region for critical 
   availability requirements. 
 - **ALB cost** - the ALB incurs an hourly charge (~$0.008/hr)
   plus LCU charges based on traffic. This is justified by the
   security and scalability benefits but must be accounted for
   in production budgets
-- **Increased complexity** - the tjree-component stack (ALB + 
-  target group + listener) requires more onfiguration than a
+- **Increased complexity** - the three-component stack (ALB + 
+  target group + listener) requires more configuration than a
   EC2 instance with a Public IP
 - **No Direct SSH access** - developers cannot SSH directly to
   the EC2 instance. Access requires AWS Systems Manager Session
-  Manager or a bstion host pattern
+  Manager or a bastion host pattern
 - **Single EC2 instance in dev** - the current dev configuration
   runs one EC2 instance with no Auto Scaling. A single instance
   failure would cause downtime until manually resolved. Production

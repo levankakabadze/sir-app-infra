@@ -38,3 +38,25 @@ variable "ami_id" {
   description = "The AMI ID for the EC2 instance"
   type        = string
 }
+
+variable "db_name" {
+  description = "The name of the initial database to create"
+  type        = string
+}
+
+variable "db_username" {
+  description = "The master username for the RDS instance"
+  type        = string
+}
+
+variable "db_password" {
+  description = "The master password for the RDS instance"
+  type        = string
+  sensitive   = true
+}
+
+variable "db_instance_class" {
+  description = "The instance type of the RDS instance"
+  type        = string
+  default     = "db.t3.micro"
+}
