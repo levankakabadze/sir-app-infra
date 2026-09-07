@@ -92,7 +92,7 @@ $0.00 - security groups are free
 ---
 
 ## Phase 4 - Compute Module
-**Status:** Not Started
+**Status:** ✅ Complete
 
 ## To Do
 - [ ] Build modules/compute/ - EC2, ALB, target group, listener
@@ -102,3 +102,40 @@ $0.00 - security groups are free
 - [ ] terraform apply - deploy compute with NAT Gateway
 - [ ] Hit ALB URL in browser - verify nginx page loads
 - [ ] Destroy EC2, ALB, NAT Gateway after session
+
+### Completed
+- [x] ADR-003 written - compute architecture decision
+- [x] modules/compute/variables.tf
+- [x] modules/compute/user_data.sh - nginx + SIR landing page
+- [x] modules/compute/main.tf - ALB, target group, listener, EC2
+- [x] modules/compute/outputs.tf - ALB DNS name, EC2 instance ID
+- [x] environments/dev/main.tf - compute module corrected
+- [x] environments/dev/variables.tf - ami_id, instance_type added
+- [x] terraform apply - SIR landing page live in browser
+- [x] Verified http://sir-app-dev-alb-322921282.eu-central-1.elb.amazonaws.com
+- [x] Destroyed - EC2, ALB, NAT Gateway after session
+
+### Key Learnings
+- admintf needed `elasticloadbalancing:*` and `iam:CreateServiceLinkedRole`
+  permissions - added to sir-app-terraform-compute-policy
+- Service linked role for ELB created automatically on first ALB
+  in the account - one-time permission requirement
+- `templatefile()` injects Terraform variables into bash scripts -
+  `${environment}` and `${region}` substituted before EC2 receives script
+- data "aws_region" "current" reads region from provider -
+  no need to hardcode or declare as variable
+- ALB target group health check must pass before traffic routes
+- -target destroy o compute cascades: ALB listener, trage group
+  attachment, private RT associations all destroyed automatically
+
+### Cost This Session
+- ~$0.15 - NAT Gateway + EC2 + ALB at Frankfurt rates
+
+## Phase 5 - Database Module
+**Status:** Not Started
+
+## To Do
+- [ ] Write ADR-004 - RDS isolation design
+- [ ] Build modules/database - RDS PostgresSQL
+- [ ] Verify EC2 can reach RDS, internet cannot
+- [ ] Destroy after session
