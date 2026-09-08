@@ -63,21 +63,23 @@ Architecture Decision Record before any code was written:
 
 ## Project Structure
 
+## Project Structure
+
+```
 sir-app-infra/
 ├── modules/
-│ ├── networking/ # VPC, subnets, IGW, NAT, route tables, VPC endpoint
-│ ├── security/ # Chained security groups
-│ ├── compute/ # EC2, ALB, target group, user data
-│ ├── database/ # RDS PostgreSQL
-│ ├── storage/ # S3 bucket with versioning and encryption
-│ └── iam/ # EC2 role, developer user, CI/CD user
+│   ├── networking/     # VPC, subnets, IGW, NAT, route tables, VPC endpoint
+│   ├── security/       # Chained security groups
+│   ├── compute/        # EC2, ALB, target group, user data
+│   ├── database/       # RDS PostgreSQL
+│   ├── storage/        # S3 bucket with versioning and encryption
+│   └── iam/            # EC2 role, developer user, CI/CD user
 ├── environments/
-│ └── dev/ # Dev environment — eu-central-1
+│   └── dev/            # Dev environment — eu-central-1
 └── docs/
-├── adr/ # Architecture Decision Records
-└── diagrams/ # Architecture diagrams
-
-
+    ├── adr/            # Architecture Decision Records
+    └── diagrams/       # Architecture diagrams
+```
 ---
 
 ## Infrastructure Highlights
