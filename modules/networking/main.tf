@@ -1,4 +1,10 @@
 # ==============================================================================
+# DATA SOURCE
+# =============================================================================
+
+data "aws_region" "current" {}
+
+# ==============================================================================
 # VPC
 # ==============================================================================
 
@@ -152,4 +158,24 @@ resource "aws_route_table_association" "isolated" {
 
   subnet_id      = aws_subnet.isolated[each.key].id
   route_table_id = aws_route_table.isolated.id
+}
+
+# ==============================================================================
+# VPC ENDPOINTS
+# ==============================================================================
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
+  vpc_endpoint_type = "Gateway"
+
+  route_table_ids = [
+    aws_route_table.private.id,
+    aws_route_table.isolated.id
+  ]
+
+  tags = {
+    Name = "${var.project}-${var.environment}-s3-endpoint"
+  }
+  
 }
