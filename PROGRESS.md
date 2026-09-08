@@ -134,10 +134,18 @@ $0.00 - security groups are free
 - [x] environments/dev/main.tf — database module connected
 - [x] environments/dev/variables.tf — db variables added
 - [x] environments/dev/terraform.tfvars — db credentials added locally
-- [x] terraform plan — 11 resources verified, password shown as sensitive
+- [x] terraform apply — RDS available, endpoint confirmed
 
-### Pending
-- [ ] terraform apply — waiting for storage and IAM modules
+### Key Learnings
+- RDS forbidden password characters: / @ " and space
+- @ symbol in password causes `InvalidParameterValue` error
+- State lock not released on failed apply - use `force-unlock`
+- RDS service linked role requires `iam:CreateServiceLinkedRole`
+  permission on first RDS instance in account
+- RDS provisioning takes ~10-15 minutes - normal behavior
+
+### Cost This Session
+~$0.20 - NAT GW + EC2 + ALB + RDS ~ 1.5 hours at Frankfurt rates
 
 ---
 
@@ -152,6 +160,7 @@ $0.00 - security groups are free
       public access block, bucket policy
 - [x] modules/storage/outputs.tf — bucket_name, bucket_arn
 - [x] Connected to root module via module.iam.ec2_role_arn
+- [x] Verified — sir-app-dev-assets bucket created in AWS
 
 ### Cost
 $0.00 — S3 storage only, negligible for lab
@@ -171,30 +180,52 @@ $0.00 — S3 storage only, negligible for lab
 - [x] Resolved circular dependency — removed S3 policy from IAM
       module, bucket policy in storage module handles access
 - [x] EC2 instance profile connected to compute module
+- [x] Verified — IAM resources created successfully
 
 ---
 
 ## Phase 8 — VPC Endpoint
-**Status:** In Progress
+**Status:** ✅ Complete
+**Date Completed:** 2026-09-08
 
 ### To Do
-- [ ] ADR-007 written ✅
-- [ ] Add S3 Gateway VPC Endpoint to modules/networking/main.tf
-- [ ] Add data "aws_region" "current" to networking module
-- [ ] terraform plan — verify endpoint added to plan
-- [ ] Commit all changes
+- [x] ADR-007 written — S3 Gateway VPC endpoint decision
+- [x] Added data "aws_region" "current" to networking module
+- [x] Added aws_vpc_endpoint.s3 to networking module
+- [x] Associated with private and isolated route tables
+- [x] terraform plan — 23 resources verified
+- [x] Verified — VPC endpoint active, S3 traffic routed internally
+
+### Key Learnings
+- S3 Gateway endpoint is free — eliminates NAT Gateway 
+  data transfer charges for S3 traffic
+- Gateway endpoints work at route table level — no app 
+  code changes needed
+- Only S3 and DynamoDB support Gateway endpoints — 
+  all other services need Interface endpoints (cost money)
 
 ---
 
-## Apply Session — All Modules
-**Status:** Pending
+## Full Stack Apply — All Modules
+**Status:** ✅ Complete
+**Date Completed:** 2026-09-08
 
-### To Do
-- [ ] terraform apply — deploy all 22+ resources
-- [ ] Verify ALB DNS name output — hit in browser
-- [ ] Verify RDS endpoint output
-- [ ] Verify S3 bucket exists in AWS console
-- [ ] Verify IAM roles and users created
-- [ ] Verify VPC endpoint appears in AWS console
-- [ ] Destroy RDS, EC2, ALB, NAT Gateway after session
-- [ ] Keep: VPC, subnets, SGs, S3, IAM, VPC endpoint
+### Verified
+- [x] ALB DNS name — SIR landing page live in browser
+- [x] EC2 — nginx running, IAM instance profile attached
+- [x] RDS — available, endpoint confirmed
+- [x] S3 — sir-app-dev-assets bucket created
+- [x] IAM — EC2 role, developer user, CI/CD user created
+- [x] VPC endpoint — S3 traffic routed internally
+- [x] All security groups — chained correctly
+- [x] Destroyed — RDS, EC2, ALB, NAT Gateway after session
+
+### What is still running (free)
+- VPC, subnets, IGW, route tables
+- Security groups + rules
+- S3 bucket (sir-app-dev-assets)
+- IAM roles and users
+- VPC endpoint
+
+### Total Project Cost To Date
+~$0.45 across all sessions
