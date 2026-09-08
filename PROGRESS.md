@@ -142,30 +142,59 @@ $0.00 - security groups are free
 ---
 
 ## Phase 6 — Storage Module
-**Status:** Not Started
+**Status:** ✅ Complete
+**Date Completed:** 2026-09-08
 
-### To Do
-- [ ] ADR-005 written ✅
-- [ ] Build modules/storage/ — S3 bucket, versioning, encryption
-- [ ] Bucket policy — EC2 role only
-- [ ] Connect to root module
+### Completed
+- [x] ADR-005 written — S3 access control design
+- [x] modules/storage/variables.tf
+- [x] modules/storage/main.tf — S3 bucket, versioning, encryption,
+      public access block, bucket policy
+- [x] modules/storage/outputs.tf — bucket_name, bucket_arn
+- [x] Connected to root module via module.iam.ec2_role_arn
+
+### Cost
+$0.00 — S3 storage only, negligible for lab
 
 ---
 
 ## Phase 7 — IAM Module
-**Status:** Not Started
+**Status:** ✅ Complete
+**Date Completed:** 2026-09-08
 
-### To Do
-- [ ] ADR-006 written ✅
-- [ ] Build modules/iam/ — EC2 role, developer user, CI/CD user
-- [ ] Instance profile for EC2
-- [ ] Connect to root module
+### Completed
+- [x] ADR-006 written — IAM least privilege design
+- [x] modules/iam/variables.tf
+- [x] modules/iam/main.tf — EC2 role, instance profile,
+      developer user, CI/CD user
+- [x] modules/iam/outputs.tf — role ARN, profile name, user ARNs
+- [x] Resolved circular dependency — removed S3 policy from IAM
+      module, bucket policy in storage module handles access
+- [x] EC2 instance profile connected to compute module
 
 ---
 
-## Apply Session (After Phase 6 and 7 complete)
-- [ ] terraform apply — deploy all modules together
+## Phase 8 — VPC Endpoint
+**Status:** In Progress
+
+### To Do
+- [ ] ADR-007 written ✅
+- [ ] Add S3 Gateway VPC Endpoint to modules/networking/main.tf
+- [ ] Add data "aws_region" "current" to networking module
+- [ ] terraform plan — verify endpoint added to plan
+- [ ] Commit all changes
+
+---
+
+## Apply Session — All Modules
+**Status:** Pending
+
+### To Do
+- [ ] terraform apply — deploy all 22+ resources
+- [ ] Verify ALB DNS name output — hit in browser
 - [ ] Verify RDS endpoint output
-- [ ] Verify S3 bucket exists
+- [ ] Verify S3 bucket exists in AWS console
 - [ ] Verify IAM roles and users created
+- [ ] Verify VPC endpoint appears in AWS console
 - [ ] Destroy RDS, EC2, ALB, NAT Gateway after session
+- [ ] Keep: VPC, subnets, SGs, S3, IAM, VPC endpoint
