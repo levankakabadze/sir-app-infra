@@ -229,3 +229,29 @@ $0.00 — S3 storage only, negligible for lab
 
 ### Total Project Cost To Date
 ~$0.45 across all sessions
+
+
+## Refactor -- Multi-AZ NAT Gateway Support
+**Status:** In Progress
+**Date Started:** 2026-09-09
+
+### Why
+Dev uses one NAT Gateway (cost saving). Prod needs two NAT Gateways
+(one per AZ for resilience). The networking module must support both
+without separate modules. 
+
+### Changes Requires
+- [ ] Add `nat_gateways_azs` variable to modules/networking/variables.tf
+- [ ] Refactor `aws_eip` to use for_each
+- [ ] Refactor `aws_nat_gateway` to use for_each
+- [ ] Refactor `aws_route_table.private` to use for_each
+- [ ] Refactor `aws_route_table_association.private` to match new RT keys
+- [ ] Add `moved` blocks to prevent destroy/recreate of existing resources
+- [ ] Add `nat_gateway_azs` to environments/dev/variables.tf and tfvars
+- [ ] Add `nat_gateway_azs` to environments/prod/variables.tf and tfvars
+- [ ] Verity no unexpected destroy and verify moved blocks work correctly
+
+### Key Risk
+Resource addresses change from `aws_nat_gateway.main` to 
+`aws_nat_gateway.main["a"]` — `moved` blocks required to prevent 
+Terraform from destroying and recreating existing infrastructure.
