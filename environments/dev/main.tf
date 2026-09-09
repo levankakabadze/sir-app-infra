@@ -13,6 +13,7 @@ module "networking" {
   public_subnet_cidrs   = var.public_subnet_cidrs
   private_subnet_cidrs  = var.private_subnet_cidrs
   isolated_subnet_cidrs = var.isolated_subnet_cidrs
+  nat_gateway_azs = var.nat_gateway_azs
 }
 
 # ==============================================================================

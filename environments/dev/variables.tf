@@ -60,3 +60,9 @@ variable "db_instance_class" {
   type        = string
   default     = "db.t3.micro"
 }
+
+variable "nat_gateway_azs" {
+  description = "AZ suffixes to deploy NAT Gateways in, use one for dev, two for prod"
+  type        = set(string)
+  default     = ["a"]
+}

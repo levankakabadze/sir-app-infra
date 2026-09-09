@@ -18,9 +18,9 @@ output "isolated_subnet_ids" {
   value       = { for k, v in aws_subnet.isolated : k => v.id }
 }
 
-output "nat_gateway_id" {
-  description = "ID of the NAT Gateway"
-  value       = aws_nat_gateway.main.id
+output "nat_gateway_ids" {
+  description = "Map of NAT Gateway IDs keyed by AZ suffix"
+  value       = { for k, v in aws_nat_gateway.main : k => v.id }
 }
 
 output "internet_gateway_id" {

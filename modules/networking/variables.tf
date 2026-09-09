@@ -27,3 +27,9 @@ variable "project" {
   description = "The project name used for resource naming"
   type        = string
 }
+
+variable "nat_gateway_azs" {
+  description = "AZ suffixes to deploy NAT Gateways in, use one for dev, two for prod"
+  type        = set(string)
+  default     = ["a"]
+}

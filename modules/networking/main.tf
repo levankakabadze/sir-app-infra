@@ -79,19 +79,21 @@ resource "aws_internet_gateway" "main" {
 # ==============================================================================
 
 resource "aws_eip" "nat" {
+  for_each = toset(var.nat_gateway_azs)
   domain = "vpc"
 
   tags = {
-    Name = "${var.project}-${var.environment}-nat-eip"
+    Name = "${var.project}-${var.environment}-nat-eip-${each.key}"
   }
 }
 
 resource "aws_nat_gateway" "main" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public["a"].id
+  for_each = toset(var.nat_gateway_azs)
+  allocation_id = aws_eip.nat[each.key].id
+  subnet_id     = aws_subnet.public[each.key].id
 
   tags = {
-    Name = "${var.project}-${var.environment}-nat-gateway"
+    Name = "${var.project}-${var.environment}-nat-gateway-${each.key}"
   }
 
   depends_on = [aws_internet_gateway.main]
@@ -115,15 +117,16 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table" "private" {
+  for_each = toset(var.nat_gateway_azs)
   vpc_id = aws_vpc.main.id
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main.id
+    nat_gateway_id = aws_nat_gateway.main[each.key].id
   }
 
   tags = {
-    Name = "${var.project}-${var.environment}-rt-private"
+    Name = "${var.project}-${var.environment}-rt-private-${each.key}"
   }
 }
 
@@ -150,7 +153,9 @@ resource "aws_route_table_association" "private" {
   for_each = var.private_subnet_cidrs
 
   subnet_id      = aws_subnet.private[each.key].id
-  route_table_id = aws_route_table.private.id
+  route_table_id = aws_route_table.private[
+    contains(tolist(var.nat_gateway_azs), each.key) ? each.key : tolist(toset(var.nat_gateway_azs))[0]
+  ].id
 }
 
 resource "aws_route_table_association" "isolated" {
@@ -169,13 +174,12 @@ resource "aws_vpc_endpoint" "s3" {
   service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
   vpc_endpoint_type = "Gateway"
 
-  route_table_ids = [
-    aws_route_table.private.id,
-    aws_route_table.isolated.id
-  ]
+  route_table_ids = concat(
+    values(aws_route_table.private)[*].id,
+    [aws_route_table.isolated.id]
+  )
 
   tags = {
     Name = "${var.project}-${var.environment}-s3-endpoint"
   }
-  
 }
