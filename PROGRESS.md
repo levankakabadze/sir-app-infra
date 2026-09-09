@@ -231,27 +231,55 @@ $0.00 — S3 storage only, negligible for lab
 ~$0.45 across all sessions
 
 
-## Refactor -- Multi-AZ NAT Gateway Support
-**Status:** In Progress
-**Date Started:** 2026-09-09
+## Refactor — Multi-AZ NAT Gateway Support
+**Status:** ✅ Complete
+**Date Completed:** 2026-09-08
 
-### Why
-Dev uses one NAT Gateway (cost saving). Prod needs two NAT Gateways
-(one per AZ for resilience). The networking module must support both
-without separate modules. 
+### Completed
+- [x] Added nat_gateway_azs variable to networking module
+- [x] Refactored aws_eip to use for_each
+- [x] Refactored aws_nat_gateway to use for_each
+- [x] Refactored aws_route_table.private to use for_each
+- [x] Refactored aws_route_table_association.private fallback logic
+- [x] Added moved blocks — zero destroys during refactor
+- [x] Added nat_gateway_azs to dev and prod environments
+- [x] terraform apply — verified moved blocks, browser confirmed working
 
-### Changes Requires
-- [ ] Add `nat_gateways_azs` variable to modules/networking/variables.tf
-- [ ] Refactor `aws_eip` to use for_each
-- [ ] Refactor `aws_nat_gateway` to use for_each
-- [ ] Refactor `aws_route_table.private` to use for_each
-- [ ] Refactor `aws_route_table_association.private` to match new RT keys
-- [ ] Add `moved` blocks to prevent destroy/recreate of existing resources
-- [ ] Add `nat_gateway_azs` to environments/dev/variables.tf and tfvars
-- [ ] Add `nat_gateway_azs` to environments/prod/variables.tf and tfvars
-- [ ] Verity no unexpected destroy and verify moved blocks work correctly
+---
 
-### Key Risk
-Resource addresses change from `aws_nat_gateway.main` to 
-`aws_nat_gateway.main["a"]` — `moved` blocks required to prevent 
-Terraform from destroying and recreating existing infrastructure.
+## Prod Environment
+**Status:** ✅ Complete
+**Date Completed:** 2026-09-08
+
+### Completed
+- [x] environments/prod/backend.tf — prod state isolated
+- [x] environments/prod/providers.tf — prod tags
+- [x] environments/prod/variables.tf — all variables declared
+- [x] environments/prod/terraform.tfvars — prod values
+- [x] environments/prod/main.tf — all 6 modules connected
+- [x] modules/database — multi_az and deletion_protection variables added
+- [x] terraform init — prod backend initialized
+- [x] terraform validate — configuration valid
+- [x] terraform plan — 51 resources, multi_az=true, deletion_protection=true confirmed
+
+### Key Differences from Dev
+- nat_gateway_azs = ["a", "b"] — two NAT Gateways for AZ resilience
+- multi_az = true — RDS Multi-AZ standby in isolated-1b
+- deletion_protection = true — RDS protected from accidental destroy
+- instance_type = t3.small — slightly larger for prod workload
+- Environment tag = "prod" on all resources
+
+### Cost if Applied (not applied — plan only)
+~$0.20+/hr — 2x NAT GW + EC2 + ALB + RDS Multi-AZ
+
+---
+
+## Project Status: ✅ COMPLETE
+
+### What Was Built
+- 7 Architecture Decision Records
+- 6 Terraform modules (networking, security, compute, database, storage, iam)
+- 2 environments (dev deployed and verified, prod planned and verified)
+- Production architecture diagram
+- README.md portfolio documentation
+- Total project cost: ~$0.65
