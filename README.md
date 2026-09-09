@@ -76,6 +76,7 @@ sir-app-infra/
 │   └── iam/            # EC2 role, developer user, CI/CD user
 ├── environments/
 │   └── dev/            # Dev environment — eu-central-1
+│   └── prod/           # Prod environment — eu-central-1
 └── docs/
     ├── adr/            # Architecture Decision Records
     └── diagrams/       # Architecture diagrams
