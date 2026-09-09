@@ -39,3 +39,15 @@ variable "db_instance_class" {
   type        = string
   default     = "db.t3.micro"
 }
+
+variable "multi_az" {
+  description = "Enable Multi-AZ deployment for the RDS HA"
+  type        = bool
+  default     = false
+}
+
+variable "deletion_protection" {
+  description = "Enable deletion protection for the RDS instance"
+  type        = bool
+  default     = false
+}

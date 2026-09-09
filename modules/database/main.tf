@@ -32,8 +32,9 @@ resource "aws_db_instance" "main" {
     vpc_security_group_ids   = [var.db_sg_id]
 
     publicly_accessible      = false
-    multi_az                 = false
-    skip_final_snapshot      = true
+    multi_az                 = var.multi_az
+    deletion_protection      = var.deletion_protection
+    skip_final_snapshot      = !var.deletion_protection
 
     tags = {
         Name        = "${var.project}-${var.environment}-postgres"
